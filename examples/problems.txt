@@ -1,0 +1,52 @@
+problems for m-programmer
+problem1 - get jewel
+
+solution1:
+move foward 1
+move foward 1
+move foward 1
+
+solution2:
+X=3
+move foward X
+
+problem2 - move around the edges of the board
+
+solution1:
+turn left
+X=4
+move foward X
+turn right
+X=9
+move foward X
+turn right
+X=9
+move foward X
+turn right
+X=9
+move foward X
+
+solution2:
+turn left
+X=4
+move foward X
+do procedure Repeaat_Forever
+do procedure Repeaat_Forever
+do procedure Repeaat_Forever
+
+procedure Repeaat_Forever
+turn right
+X=9
+move foward X
+
+problem3 - draw circles on edge of board
+solution:
+move turtle to the edge of board, turn left
+procedure Repeaat_Forever
+if not on last place on board {
+    draw dot on board
+    foward one slot
+} else {
+    turn left
+}
+do procedure Repeaat_Forever
