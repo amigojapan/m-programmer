@@ -39,7 +39,17 @@ turn right
 X=9
 move foward X
 
-problem3 - draw circles on edge of board
+problem3 - conditional
+procedure Repeaat_Forever
+if not on last place on board {
+    //do domething
+} else {
+    /do domething else
+}
+do procedure Repeaat_Forever
+
+
+problem4 - draw circles on edge of board
 solution:
 move turtle to the edge of board, turn left
 procedure Repeaat_Forever
