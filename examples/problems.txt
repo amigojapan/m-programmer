@@ -1,18 +1,25 @@
 problems for m-programmer
+m-programmerの問題
+problemas para m-programmer
+
 problem1 - get jewel
+問題一、ダイアモンドを取りに行こう
+problema１- obten la joya
 
-solution1:
+solution1、答えその一,solucion1:
 move foward 1
 move foward 1
 move foward 1
 
-solution2:
+solution2、答えその二,solucion2:
 X=3
 move foward X
 
 problem2 - move around the edges of the board
+問題二、ボードの端っこを亀をあるかせましょう
+problema2 - mueve l tortuga por las orillas de el papel cuadriculado
 
-solution1:
+solution1、答えその一,solucion1:
 turn left
 X=4
 move foward X
@@ -26,7 +33,7 @@ turn right
 X=9
 move foward X
 
-solution2:
+solution2、答えその二,solucion2:
 turn left
 X=4
 move foward X
@@ -39,24 +46,84 @@ turn right
 X=9
 move foward X
 
-problem3 - conditional
-procedure Repeaat_Forever
-if not on last place on board {
-    //do domething
+problem3 - conditional "can I in Japan or not vote or not?"
+問題三、「もし」　「もうせんきょうけんをもってるの？]
+problema3 - "¿puedo votar en Japón o no?"
+
+solution、答え,solucion:
+output "how old are you,年はいくつ,¿cuantos años tienes?:"
+input
+if Y > 20 {
+    output "you can already vote in Japan, もう日本でせんきょうけんを持ってる,ya puedes votar en Japón"
 } else {
-    /do domething else
+    output "you cant vote in Japan yet,まだ日本ではせんきょうけんを持ってない,todavia no puedes votar"
 }
-do procedure Repeaat_Forever
 
 
 problem4 - draw circles on edge of board
-solution:
-move turtle to the edge of board, turn left
-procedure Repeaat_Forever
-if not on last place on board {
-    draw dot on board
-    foward one slot
-} else {
+問題四、ボードの端っこを全部●を置きましょう
+problema4 - pon puntos negros en el borde de el papel cuadriculado
+
+solution、答え,solucion:
+turn left
+do procedure P
+
+procedure P:
+if there is no dot under turtle and turtle is on corner of board {
     turn left
+
 }
-do procedure Repeaat_Forever
+draw dot on board
+foward one slot
+do procedure P
+
+simpe rosettacode projects http://rosettacode.org/wiki/Category:Simple
+A+B
+Math test(needs random number generator, may need dice)
+function getDiceRoll() {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+  return Math.round(Math.random() * (6 - 1) + 1);
+}
+//just multiply the first digit of he die  by 10 and then substract 11 to make it from 0 to 55, repeat the procedure until it is more than 50
+// make that A. then repeat the same procedure and make that B if be is 0 add 1, then ad A and B 
+function Zero_to_50(){
+    do {
+        var tmp=(getDiceRoll()*10)+getDiceRoll()-11;
+    }while(tmp>50);
+    return tmp;
+}
+var A=Zero_to_50();
+var B=Zero_to_50();
+if(B==0) {
+    B=1;
+}
+one_to_100=A+B;
+
+
+//Sadale: amigojapan_bnc, maybe this. First roll a die. If n>=4, adds 5 to the next die. Otherwise it's 0. After that, roll the die again. If n<= 5, add n
+//with the previous value. If n==6, reroll.
+//[01:39am] Sadale: amigojapan_bnc, after this process, you get one digit.
+//[01:40am] Sadale: So to get 4 digits, you need to throw 4 times, or more if you encounter 6.
+//this can be used to make arbitrary numbers
+function getDiceRoll() {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+  return Math.round(Math.random() * (6 - 1) + 1);
+}
+function getDigit(){
+	var ret = 0;
+	if(getDiceRoll() >= 4){
+		ret += 5
+    }
+	while(true) {
+		var value = getDiceRoll();
+		if(value <= 5) {
+			ret += value;
+			if(ret == 10){ // NEW CONDITION!!
+				ret = 0
+            }
+			return ret;
+        }
+    }
+}
+
+for(i=0;i<100;i++){
+    console.log(getDigit());
+}
