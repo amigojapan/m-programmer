@@ -12,4 +12,4 @@ example program that draws circlers around the edge of the 10 by 10 board:
 example of printable: 
 ![alt text](http://i.imgur.com/3YfjtR2.png "Logo Title Text 1")
 
-You may use these documents completely freely.
+© 2017 Usmar A.Padow(amigojapan)
