@@ -1,0 +1,55 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="9" y="3">
+    <field name="proc">START_HERE()</field>
+    <field name="comment">"Can I vote in Japan yet program"</field>
+    <next>
+      <block type="output_block">
+        <field name="out">"how old are you?"</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="input_block">
+            <field name="comment">no comment</field>
+            <next>
+              <block type="conditional_block">
+                <field name="cond">Y&lt;18</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="output_block">
+                    <field name="out">"you can't vote in Japan yet"</field>
+                    <field name="comment">no comment</field>
+                    <next>
+                      <block type="end_conditional_block">
+                        <next>
+                          <block type="conditional_block">
+                            <field name="cond">Y&gt;17</field>
+                            <field name="comment">no comment</field>
+                            <next>
+                              <block type="output_block">
+                                <field name="out">"you can vote in Japan now"</field>
+                                <field name="comment">no comment</field>
+                                <next>
+                                  <block type="end_conditional_block">
+                                    <next>
+                                      <block type="process_block">
+                                        <field name="proc">END()</field>
+                                        <field name="comment">no comment</field>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

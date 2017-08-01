@@ -1,0 +1,48 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="132" y="62">
+    <field name="proc">res=factorial(5)</field>
+    <field name="comment">http://www.python-course.eu/recursive_functions.php</field>
+    <next>
+      <block type="output_block">
+        <field name="out">"result of factorial 5 is:"+res</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="procedure">
+            <field name="proc_name">factorial</field>
+            <statement name="statements">
+              <block type="process_block">
+                <field name="proc">n=parameter</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="conditional_block">
+                    <field name="cond">n==1</field>
+                    <field name="comment">no comment</field>
+                    <next>
+                      <block type="process_block">
+                        <field name="proc">return 1</field>
+                        <field name="comment">no comment</field>
+                        <next>
+                          <block type="control_else">
+                            <next>
+                              <block type="process_block">
+                                <field name="proc">return n * factorial(n-1)</field>
+                                <field name="comment">no comment</field>
+                                <next>
+                                  <block type="end_conditional_block"></block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

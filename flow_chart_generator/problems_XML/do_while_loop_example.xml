@@ -1,0 +1,55 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="196" y="8">
+    <field name="proc">START_HERE()</field>
+    <field name="comment">do while example</field>
+    <next>
+      <block type="do_process_block">
+        <field name="proc">do_while_loop</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="process_block">
+            <field name="proc">END()</field>
+            <field name="comment">no comment</field>
+            <next>
+              <block type="procedure">
+                <field name="proc_name">do_while_loop</field>
+                <statement name="statements">
+                  <block type="output_block">
+                    <field name="out">"continue YES/NO?:"</field>
+                    <field name="comment">question</field>
+                    <next>
+                      <block type="input_block">
+                        <field name="comment">no comment</field>
+                        <next>
+                          <block type="process_block">
+                            <field name="proc">CONTINUE=Y</field>
+                            <field name="comment">no comment</field>
+                            <next>
+                              <block type="conditional_block">
+                                <field name="cond">CONTINUE=="YES"</field>
+                                <field name="comment">no comment</field>
+                                <next>
+                                  <block type="do_process_block">
+                                    <field name="proc">do_while_loop</field>
+                                    <field name="comment">no comment</field>
+                                    <next>
+                                      <block type="end_conditional_block"></block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

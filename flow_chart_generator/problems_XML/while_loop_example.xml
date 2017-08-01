@@ -1,0 +1,47 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="220" y="96">
+    <field name="proc">START_HERE()</field>
+    <field name="comment">while loop example</field>
+    <next>
+      <block type="process_block">
+        <field name="proc">CONTINUE="YES"</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="do_process_block">
+            <field name="proc">while_loop</field>
+            <field name="comment">no comment</field>
+            <next>
+              <block type="process_block">
+                <field name="proc">END()</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="while_loop">
+                    <field name="loop_ID">while_loop</field>
+                    <field name="cond">CONTINUE=="YES"</field>
+                    <statement name="statements">
+                      <block type="output_block">
+                        <field name="out">"continue YES/NO?:"</field>
+                        <field name="comment">no comment</field>
+                        <next>
+                          <block type="input_block">
+                            <field name="comment">no comment</field>
+                            <next>
+                              <block type="process_block">
+                                <field name="proc">CONTINUE=Y</field>
+                                <field name="comment">no comment</field>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

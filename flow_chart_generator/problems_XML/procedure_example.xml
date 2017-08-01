@@ -1,0 +1,31 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="do_process_block" x="148" y="74">
+    <field name="proc">P</field>
+    <field name="comment">no comment</field>
+    <next>
+      <block type="do_process_block">
+        <field name="proc">P</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="procedure">
+            <field name="proc_name">P</field>
+            <statement name="statements">
+              <block type="conditional_block">
+                <field name="cond">cond</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="turn_left">
+                    <field name="comment">no comment</field>
+                    <next>
+                      <block type="end_conditional_block"></block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

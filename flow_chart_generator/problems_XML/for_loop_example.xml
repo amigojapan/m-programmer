@@ -1,0 +1,72 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="242" y="-2">
+    <field name="proc">START()</field>
+    <field name="comment">program repeatrs 10 times</field>
+    <next>
+      <block type="process_block">
+        <field name="proc">TIMES=0</field>
+        <field name="comment">no comment</field>
+        <next>
+          <block type="process_block">
+            <field name="proc">INITIAL=0</field>
+            <field name="comment">no comment</field>
+            <next>
+              <block type="process_block">
+                <field name="proc">END=10</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="process_block">
+                    <field name="proc">COUNTER=INITIAL</field>
+                    <field name="comment">no comment</field>
+                    <next>
+                      <block type="do_process_block">
+                        <field name="proc">for_loop</field>
+                        <field name="comment">no comment</field>
+                        <next>
+                          <block type="output_block">
+                            <field name="out">"TIMES:"+TIMES</field>
+                            <field name="comment">no comment</field>
+                            <next>
+                              <block type="process_block">
+                                <field name="proc">END()</field>
+                                <field name="comment">no comment</field>
+                                <next>
+                                  <block type="while_loop">
+                                    <field name="loop_ID">for_loop</field>
+                                    <field name="cond">COUNTER&lt;END</field>
+                                    <statement name="statements">
+                                      <block type="process_block">
+                                        <field name="proc">TIMES=TIMES+1</field>
+                                        <field name="comment">no comment</field>
+                                        <next>
+                                          <block type="output_block">
+                                            <field name="out">"COUNTER:"+COUNTER</field>
+                                            <field name="comment">no comment</field>
+                                            <next>
+                                              <block type="process_block">
+                                                <field name="proc">COUNTER = COUNTER+1</field>
+                                                <field name="comment">no comment</field>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </statement>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

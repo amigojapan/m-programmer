@@ -1,0 +1,1294 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>m-programmer flowchart generator</title>
+        <script src="https://amigojapan.github.io/s-found/NeilFraser-JS-Interpreter-9c09d45/acorn_interpreter.js"></script>
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/blockly_compressed.js"></script>
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/blocks_compressed.js"></script>
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/javascript_compressed.js"></script>
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/msg/js/en.js"></script>
+        
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/generators/javascript/math.js"></script>
+        <script src="https://amigojapan.github.io/s-found/google-blockly-a77788d/generators/javascript/text.js"></script>
+        <!--
+        <script type="text/javascript" src="js/2017_2_2/phaser.js"></script>
+        -->
+        <style type="text/css">
+            .div-table {
+                display:table;         
+                width:auto;         
+                background-color:#eee;         
+                border:1px solid  #666666;         
+                border-spacing:5px;/*cellspacing:poor IE support for  this*/
+            }
+            .div-table-row {
+                display:table-row;
+                width:auto;
+                clear:both;
+            }
+            .div-table-col {
+                float:left;/*fix for  buggy browsers*/
+                display:table-column;         
+                width:100px;
+                height:100px;
+                background-color:#ccc;
+                border: 1px solid black;
+                text-align: center;
+                /*vertical-align: middle;/*
+                /*line-height: 100px;/*       /* the same as your div height */
+                /*overflow:hidden;*/
+                vertical-align: middle;
+                /*line-height: 100px;/*       /* the same as your div height */
+                /*overflow:hidden;*/
+                
+                word-wrap:break-word; /* cause word wramp, what happens if I make a really long comment? blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah*/
+            }
+            span.overlay_text { 
+                position: absolute; 
+                top: 50px; 
+                left: 0; 
+                width: 100%; 
+            }
+         </style>
+    </head>
+    <body>
+        <div id='main-window'>
+		<div id="toolbar">
+			Warning, do not use this program withought the permission of amigojapan, ask permission to usmpadow@gmail.com
+		</div>		
+		<div id="toolbar">
+			<input type="file" id="files" style="display:none;"/>
+			<img id="image" style="display:none;"/>
+			<input type="file" id="files3" style="display:none;"/>
+			<img id="frame" style="display:none;"/>
+			
+			<input type="file" id="files2" style="display:none;"/>
+			<img id="background" style="display:none;"/>
+			<a href="#" onclick='document.getElementById("files2").click();'>Change Board</a>
+			
+			<a href="#" onclick="toggleShowTerminal()">Toggle Show Terminal</a>
+						
+			<input type="file" id="files_project_upload" style="display:none;"/>
+			<a href="#" onclick='document.getElementById("files_project_upload").click();'>Open Project</a>
+		</div>
+		<div id="phaser-example"></div>
+		<div id="termDiv" style="color: yellow; background-color: black;overflow-y: auto; border:1px solid black; width: 600px; display: none;">
+			<textarea rows="15" cols="50" id="term" style="color: yellow; background-color: black;resize: none; height: 80px; max-height: 150px; width: 600px; font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;"></textarea>
+			<div><BR><input type="text" id="txtPrompt" style="color: yellow; background-color: black;width: 400px" onfocus="termOnGetFocus();" onblur="termOnLoseFocus();"/><span id="tell_to_user_input_now" style="display: none; color: red; background-color: black"><--waiting for input</span></div>
+		</div>
+		<div id="blockly">
+  	  	<p>
+			<button onclick="wsToXML()">WS->XML</button>
+			<button onclick="xmlToWS()">XML->WS</button>
+            <button onclick="runJS()">Run</button>
+  		</p>
+
+  		<div id="blocklyDiv" style="height: 600px; width: 95%;"></div>
+		  <xml id="toolbox">
+		    <category name="turtle">    
+			  <block type="turn_left"></block>
+			  <block type="turn_right"></block>
+              <block type="move_foward"></block>
+		    </category>
+		    <category name="actions">    
+			  <block type="process_block"></block>
+			  <block type="output_block"></block>
+              <block type="input_block"></block>
+              </category>  
+              <category name="flow control">
+			  <block type="conditional_block"></block> 
+              <block type="end_conditional_block"></block> 
+              <block type="procedure"></block>
+              <block type="do_process_block"></block>
+              <block type="jump_to_procedure_block"></block>
+              <block type="while_loop"></block>
+		    </category>            
+		  </xml>
+
+		  <xml id="startBlocks" style="display: none">
+		  </xml>
+	</div>
+    <div id="flowchart"></div>
+    <button onclick="runJS()">Run</button>
+    <button id='init stepper' onclick="parseCode()">Init stepper</button>
+    <button id='stepButton' onclick="stepCode()">Step</button>
+    <button onclick='throw("end");'>Stop</button>
+    <div id="IP">program not stepping</div>
+    <div id="board"></div>
+	</div>
+        <BR>Javascript/XML:<BR>
+		<textarea rows="60" cols="80" ID="txtJS">
+			Start dropping blocks to produce Javascript
+            or cliear this area, paste XML and loas with xml->ws
+		</textarea>
+        <BR>HTML:<BR>
+		<textarea rows="60" cols="80" ID="txtHTML">
+		</textarea>        
+		<BR>
+	</div>
+
+        <script>
+            var workspace;
+            var workspaceChanged;
+            function turn_left() {
+                if(turtle0.facing=="up"){
+                    turtle0.facing="left";
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="left"){
+                    turtle0.facing="down";
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="down"){
+                    turtle0.facing="right";
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="right"){
+                    turtle0.facing="up";
+                    drawBoard();
+                    return;
+                }
+            }
+
+            window.addEventListener('load', function(){
+                    workspace = Blockly.inject('blocklyDiv',{
+                    media: '../../media/',
+                    toolbox: document.getElementById('toolbox')
+                });
+                Blockly.Xml.domToWorkspace(workspace,
+                document.getElementById('startBlocks'));
+
+                state="col3_outside_loop";
+
+                instruction_number=0;
+                function html_row(imageURL,overlaid_code,text_comment) {
+                    overlaid_code = format_overlat_text_to_html(overlaid_code);
+                    var code = '';
+                    code += '<div class="div-table-row">\n';
+                    if(state=="col3_outside_loop") {
+                        code += '    <div class="div-table-col" ID="instruction_number-'+instruction_number+'"><BR><BR>'+instruction_number+'</div>\n';
+                        code += '    <div class="div-table-col">&nbsp</div>\n';
+                        code += '    <div class="div-table-col">&nbsp</div>\n';   
+                        code += '    <div class="div-table-col">\n';
+                        code += '       <img src="'+imageURL+'">\n';//this way of overlaying an image may be buggy on other browsers I guess, but it will do for now...
+                        code += '       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >' + overlaid_code + '</span>\n';
+                        code += '    </div>\n';
+                        if(text_comment=="no comment"){
+                            code += '    <div class="div-table-col">&nbsp</div>\n';
+                        } else {
+                            if(text_comment.length<=8) {//make the line center if comment is short,otherwise let it wrap over whole div
+                                code += '    <div class="div-table-col"><BR><BR>'+text_comment+'</div>\n';                    
+                            } else {
+                                code += '    <div class="div-table-col">'+text_comment+'</div>\n'; //line-height: 100px;
+                            }                   
+                        }
+                        code += '    <div class="div-table-col">&nbsp</div>\n';
+                    }
+                    //***TODO:this has to happen ONLY when it is a final GOTO block or END block otherwise thinsg like 
+                    //the guess my number game will have mistaken arrows under the do procedure block
+                    if(state=="col1_if_block"||state=="end_left_branch") {
+                        code += '    <div class="div-table-col" ID="instruction_number-'+instruction_number+'"><BR><BR>'+instruction_number+'</div>\n';                        
+                        code += '    <div class="div-table-col">\n';
+                        code += '       <img src="'+imageURL+'">\n';//this way of overlaying an image may be buggy on other browsers I guess, but it will do for now...
+                        code += '       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >' + overlaid_code + '</span>\n';
+                        code += '    </div>\n';
+                        if(text_comment=="no comment"){
+                            code += '    <div class="div-table-col">&nbsp</div>\n';
+                        } else {
+                            if(text_comment.length<=8) {//make the line center if comment is short,otherwise let it wrap over whole div
+                                code += '    <div class="div-table-col"><BR><BR>'+text_comment+'</div>\n';                    
+                            } else {
+                                code += '    <div class="div-table-col">'+text_comment+'</div>\n'; //line-height: 100px;
+                            }                   
+                        }
+                        code += '    <div class="div-table-col">&nbsp</div>\n';                    
+                        code += '    <div class="div-table-col">&nbsp</div>\n';
+                        code += '    <div class="div-table-col"><BR><BR>↓</div>\n';   
+                    }
+                    if(state=="1col_up_down") {
+                        code+=loop_body_html_row(imageURL,overlaid_code,text_comment);
+                    }
+                    code += '</div>\n';
+                    instruction_number++;
+                    return code;
+                }
+                function format_overlat_text_to_html(overlaid_code) {
+                    //regex to find double equals
+                    const regex3 = /(==)/g;
+                    const str3 =  overlaid_code;
+                    var m3 = regex3.exec(str3);
+                    if(m3==null){//== not found
+                        //overlaid_code = overlaid_code.replace("=", "<BR> = <BR>");
+
+                        //regex to find double equals
+                        const regex4 = /(=)/g;
+                        const str4 =  overlaid_code;
+                        var m4 = regex4.exec(str4);
+                        if(m4==null){//= not found
+                            //overlaid_code = overlaid_code.replace("=", "<BR> = <BR>");
+                        } else {
+                            overlaid_code = overlaid_code.replace("=", "<BR>=<BR>");
+                        }
+
+                    } else {
+                        overlaid_code = overlaid_code.replace("==", "<BR>==<BR>");
+                    }
+
+                    //htmlentities
+                    //<	less than	&#60;
+                    //>	greater than	&#62;
+                    overlaid_code = overlaid_code.replace("<", "&#60;");
+                    overlaid_code = overlaid_code.replace(">", "&#62;");
+                    //return <BR> to <BR>
+                    overlaid_code = overlaid_code.replace("&#60;BR&#62;", "<BR>");
+
+                    return overlaid_code;
+                }
+                function conditional_html_row(imageURL,overlaid_code,text_comment) {
+                    overlaid_code = format_overlat_text_to_html(overlaid_code);
+                    //htmlentities
+                    //<	less than	&#60;
+                    //>	greater than	&#62;
+                    /*
+                    overlaid_code = overlaid_code.replace("<", "&#60;");
+                    overlaid_code = overlaid_code.replace(">", "&#62;");
+                    */
+                    var code = '';
+                    code += '<div class="div-table-row">\n';
+                    if(state=="col3_outside_loop") {
+                        code += '    <div class="div-table-col" ID="instruction_number-'+instruction_number+'"><BR><BR>'+instruction_number+'</div>\n';
+                        code += '    <div class="div-table-col"><BR><BR>↓</div>\n';
+                        code += '    <div class="div-table-col"><BR>true<BR>←</div>\n';   
+                        code += '    <div class="div-table-col">\n';
+                        code += '       <img src="'+imageURL+'">\n';//this way of overlaying an image may be buggy on other browsers I guess, but it will do for now...
+                        code += '       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >' + overlaid_code + '</span>\n';
+                        code += '    </div>\n';
+                        if(text_comment=="no comment"){
+                            code += '    <div class="div-table-col"><BR>false<BR>→</div>\n';
+                        } else {
+                            if(text_comment.length<=8) {//make the line center if comment is short,otherwise let it wrap over whole div
+                                code += '    <div class="div-table-col"><BR>false<BR>→<BR><BR>'+text_comment+'</div>\n';                    
+                            } else {
+                                code += '    <div class="div-table-col"><BR>false<BR>→<BR>'+text_comment+'</div>\n'; //line-height: 100px;
+                            }                   
+                        }
+                        code += '    <div class="div-table-col"><BR><BR>↓</div>\n';
+                    }
+                    code += '</div>\n';
+                    state="col1_if_block";
+                    instruction_number++;
+                    return code;
+                }
+
+                function loop_body_html_row(imageURL,overlaid_code,text_comment) {
+                    //commented this our cause the <BR>s were double in some stuff, I think this may be being called too many times, experiment later cause it looks ok this way.overlaid_code = format_overlat_text_to_html(overlaid_code);
+                    var code = '';
+                    code += '    <div class="div-table-col" ID="instruction_number-'+instruction_number+'"><BR><BR>'+instruction_number+'</div>\n';                                            
+                    code += '    <div class="div-table-col">\n';
+                    code += '       <img src="'+imageURL+'">\n';//this way of overlaying an image may be buggy on other browsers I guess, but it will do for now...
+                    code += '       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >' + overlaid_code + '</span>\n';
+                    code += '    </div>\n';
+                    if(text_comment=="no comment"){
+                        code += '    <div class="div-table-col">&nbsp</div>\n';
+                    } else {
+                        if(text_comment.length<=8) {//make the line center if comment is short,otherwise let it wrap over whole div
+                            code += '    <div class="div-table-col"><BR><BR>'+text_comment+'</div>\n';                    
+                        } else {
+                            code += '    <div class="div-table-col"><BR>'+text_comment+'</div>\n'; //line-height: 100px;
+                        }                   
+                    }
+                    code += '    <div class="div-table-col"><BR><BR>↑</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>↓</div>\n';
+                    return code;
+                }                
+
+               function end_conditional_html_row() {
+                    var code = '';
+                    code += '<div class="div-table-row">\n';
+                    if(state=="end_left_branch") {
+                        code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'
+                        code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n';
+                        code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n';
+                    } else {  
+                        code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'                  
+                        code += '    <div class="div-table-col"><BR><BR>→</div>\n';
+                        code += '    <div class="div-table-col"><BR><BR>→</div>\n';
+                    }
+                    code += '    <div class="div-table-col"><BR><BR>↓</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>←</div>\n';   
+                    code += '    <div class="div-table-col"><BR><BR>←</div>\n';   
+                    code += '</div>\n';
+                    state="col3_outside_loop";
+                    contitionat_indent=false;
+                    return code;
+                }
+                
+                function end_while() {
+                    var code = '';
+                    code += '<div class="div-table-row">\n';
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'
+                    code += '    <div class="div-table-col"><BR><BR>→</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>→</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>↑</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n';   
+                    code += '    <div class="div-table-col"><BR><BR>↓</div>\n';   
+                    code += '</div>\n';
+                    code += '<div class="div-table-row">\n';
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'; 
+                    code += '    <div class="div-table-col"><BR><BR>&nbsp</div>\n'; 
+                    code += '    <div class="div-table-col"><BR><BR>↓</div>\n';
+                    code += '    <div class="div-table-col"><BR><BR>←</div>\n';   
+                    code += '    <div class="div-table-col"><BR><BR>←</div>\n';   
+                    code += '</div>\n';
+                    contitionat_indent=false;
+                    return code;
+                }
+                function indentation() {
+                    var code = '';
+                    if(contitionat_indent) {
+                        code += '\t';
+                    }
+                    if(in_function) {
+                        code += '\t';
+                    }                    
+                    return code;
+                }
+                //turn left block https://blockly-demo.appspot.com/static/demos/blockfactory_old/index.html#ju9zoa
+                Blockly.Blocks['turn_left'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("turn turtle left 90 degrees");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };
+                
+                Blockly.JavaScript['turn_left'] = function(block) {
+                    var text_comment = block.getFieldValue('comment');
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/turn_left_card.png";
+                    var JS=indentation()+"turn_left(); //"+text_comment+";\n";
+                    return  html_row(imageURL,"",text_comment) + "[seterator]" + JS + "[end_block]";
+                };
+
+                Blockly.Blocks['turn_right'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("turn turtle right 90 degrees");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };
+                Blockly.JavaScript['turn_right'] = function(block) {
+                    var text_comment = block.getFieldValue('comment');
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/turn_right_card.png";
+                    var JS=indentation()+"turn_right(); //"+text_comment+";\n";
+                    return  html_row(imageURL,"",text_comment) + "[seterator]" + JS  + "[end_block]";
+                };
+
+                Blockly.Blocks['move_foward'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("move turtle foward one slot");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };
+                Blockly.JavaScript['move_foward'] = function(block) {
+                    var text_comment = block.getFieldValue('comment');
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/forward_one_slot_card.png";
+                    var JS=indentation()+"move_foward(); //"+text_comment+";\n";
+                    return  html_row(imageURL,"",text_comment) + "[seterator]" + JS  + "[end_block]";
+                };
+             Blockly.Blocks['input_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("Y=user answer");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };
+                Blockly.JavaScript['input_block'] = function(block) {
+                    var text_comment = block.getFieldValue('comment');
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/input_card.png";
+                    var JS=indentation()+"Y  = prompt('waiting for input to store in Y'); //"+text_comment+";\n";
+                    return  html_row(imageURL,"",text_comment) + "[seterator]" + JS  + "[end_block]";
+                };
+
+                //process block https://blockly-demo.appspot.com/static/demos/blockfactory_old/index.html#b7kafz
+                Blockly.Blocks['process_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("process")
+                        .appendField(new Blockly.FieldTextInput("enter process here"), "proc");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                Blockly.JavaScript['process_block'] = function(block) {
+                    var text_proc = block.getFieldValue('proc');
+                    var text_comment = block.getFieldValue('comment');
+                    // TODO: Assemble JavaScript into code variable.
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png";
+                    var JS= indentation()+text_proc + "; //"+text_comment+";\n";
+
+                    var HTML=html_row(imageURL,text_proc,text_comment) + "[seterator]" + JS  + "[end_block]";
+                    if(text_proc=="END_HERE()"&&state!="col3_outside_loop"){
+                        state="end_left_branch";
+                    }
+                    return HTML;
+
+                };
+
+                Blockly.Blocks['do_process_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("do procedure")
+                        .appendField(new Blockly.FieldTextInput("enter procedure here"), "proc");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                Blockly.JavaScript['do_process_block'] = function(block) {
+                    var text_proc = block.getFieldValue('proc');
+                    var text_comment = block.getFieldValue('comment');
+                    // TODO: Assemble JavaScript into code variable.
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/do_procedure_card.png";
+                    var JS= indentation()+text_proc + "(); //do proc "+text_proc+" commends:"+text_comment+"\n";
+                    var HTML=html_row(imageURL,"<BR><BR>" + text_proc,text_comment) + "[seterator]" + JS  + "[end_block]";
+                    /*
+                    if(state!="col3_outside_loop"){
+                        state="end_left_branch";
+                    }
+                    */
+                    return HTML;
+                };
+
+                Blockly.Blocks['jump_to_procedure_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("jump to procedure")
+                        .appendField(new Blockly.FieldTextInput("enter procedure here"), "proc");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                Blockly.JavaScript['jump_to_procedure_block'] = function(block) {
+                    var text_proc = block.getFieldValue('proc');
+                    var text_comment = block.getFieldValue('comment');
+                    // TODO: Assemble JavaScript into code variable.
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png";
+                    var JS= indentation()+text_proc + "(); throw('JS program trying to go back thru a JUMP, your program should always lead to an END_HERE() if it uses JUMP'); //jump to proc "+text_proc+" commends:"+text_comment+"\n";
+                    var HTML=html_row(imageURL,"jump to procedure<BR>" + text_proc,text_comment) + "[seterator]" + JS  + "[end_block]";
+                
+                    if(state!="col3_outside_loop"){
+                        state="end_left_branch";
+                    }
+                    return HTML;
+                };
+
+
+                Blockly.Blocks['conditional_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("if")
+                        .appendField(new Blockly.FieldTextInput("enter condition here"), "cond");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                contitionat_indent=false;
+                Blockly.JavaScript['conditional_block'] = function(block) {
+                    var text_cond = block.getFieldValue('cond');
+                    var text_comment = block.getFieldValue('comment');
+                    return  generate_conditional_start(text_cond,text_comment)
+                };
+
+                Blockly.Blocks['end_conditional_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("end if");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                Blockly.JavaScript['end_conditional_block'] = function(block) {
+
+                    // TODO: Assemble JavaScript into code variable.
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/conditional_branch_card.png";
+                    var JS= "};\n; //update hte instruction pointed when a condition ends\n";
+                    return  end_conditional_html_row() + "[seterator]" + JS  + "[end_block]";
+                };                
+
+                Blockly.Blocks['output_block'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("output")
+                        .appendField(new Blockly.FieldTextInput("enter output here"), "out");
+                    this.appendDummyInput()
+                        .appendField("comment")
+                        .appendField(new Blockly.FieldTextInput("no comment"), "comment");
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };           
+                Blockly.JavaScript['output_block'] = function(block) {
+                    var out = block.getFieldValue('out');
+                    var text_comment = block.getFieldValue('comment');
+                    // TODO: Assemble JavaScript into code variable.
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png";
+                    //var text_out = text_out.replace("\'", "`");
+                    var JS= indentation()+"alert("+out + "); //"+text_comment+";\n";
+                    return  html_row(imageURL,out,text_comment) + "[seterator]" + JS  + "[end_block]";
+                }; 
+
+                //procedure block https://blockly-demo.appspot.com/static/demos/blockfactory_old/index.html#53v3cc               
+                Blockly.Blocks['procedure'] = {
+                init: function() {
+                    this.appendDummyInput()
+                        .appendField("procerude")
+                        .appendField(new Blockly.FieldTextInput("Procedure_Name"), "proc_name");
+                    this.appendStatementInput("statements")
+                        .setCheck(null);
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(120);
+                    this.setTooltip('');
+                    this.setHelpUrl('http://www.example.com/');
+                }
+                };
+
+                var in_function=false;
+                Blockly.JavaScript['procedure'] = function(block) {
+                    var text_proc_name = block.getFieldValue('proc_name');
+                    var in_function=true;
+                    var statements_statements = Blockly.JavaScript.statementToCode(block, 'statements');
+                    var in_function=false;
+                    //quick_wrapper(text_proc_name);
+                    return generate_procedure(text_proc_name,statements_statements);
+                };
+                function generate_procedure(text_proc_name,statements_statements) {
+                    var n = text_proc_name.search(" ");//find space
+                    if(n!=-1) {//space found
+                        alert("warning spaces are not allowed in function names in JS, use  underscore instead");
+                    }
+                    // TODO: Assemble JavaScript into code variable.
+                    var text_out = text_proc_name.replace(" ", "_");
+                    var text_comment = "" + text_proc_name;//hmm add comment later after all I think...
+                    var blocks = "";
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/procedure_card.png";                    
+                    var JS= indentation()+"function "+text_out+"(parameter) { // procedure "+ text_comment+"\n";
+                    blocks+=html_row(imageURL,"<BR><BR>"+text_out,text_comment) + "[seterator]" + JS  + "[end_block]";//newlines are to put it under the line
+                    blocks+=statements_statements;
+                    var text_out = "RETURN";
+                    contitionat_indent=false;
+                    in_function=false;
+                    var text_comment = "Remember this is the block after the last do procedure " + text_proc_name + " card";
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png";
+                    var JS= indentation()+ "}" + "; //"+text_comment+";\n"; 
+                    blocks+=html_row(imageURL,text_out,text_comment) + "[seterator]" + JS  + "[end_block]";                   
+                    return blocks;
+                }
+
+                //while loop block https://blockly-demo.appspot.com/static/demos/blockfactory_old/index.html#gjhk4e
+                Blockly.Blocks['while_loop'] = {
+                    init: function() {
+                        this.appendDummyInput()
+                            .appendField("while loop, procedure name:")
+                            .appendField(new Blockly.FieldTextInput("enter_a_unique_ID"), "loop_ID")
+                            .appendField("condition:")
+                            .appendField(new Blockly.FieldTextInput("enter condition here"), "cond");
+                        this.appendStatementInput("statements")
+                            .setCheck(null);
+                        this.setPreviousStatement(true, null);
+                        this.setNextStatement(true, null);
+                        this.setColour(120);
+                        this.setTooltip('');
+                        this.setHelpUrl('http://www.example.com/');
+                    }
+                };
+
+                Blockly.JavaScript['while_loop'] = function(block) {
+                    var text_loop_id = block.getFieldValue('loop_ID');
+                    var text_cond = block.getFieldValue('cond');
+                    state="1col_up_down";
+                    var statements_statements = Blockly.JavaScript.statementToCode(block, 'statements');
+                    state="col3_outside_loop";
+                    // TODO: Assemble JavaScript into code variable.
+                    return generate_while_loop(text_loop_id,statements_statements,text_cond);
+                };
+                
+                function generate_while_loop(text_proc_name,statements_statements,text_cond) {
+                    var text_out = text_proc_name.replace(" ", "_");
+                    var text_comment = "part of while loop "+ text_proc_name;
+                    var n = text_proc_name.search(" ");//find space
+                    if(n!=-1) {//space found
+                        alert("warning spaces are not allowed in function names in JS, use  underscore instead");
+                    }
+                    var blocks = "";
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/procedure_card.png";                    
+                    var JS= indentation()+"function "+text_out+"(parameter) { //"+ text_comment+"\n";
+                    blocks+=html_row(imageURL,"<BR><BR>"+text_out,text_comment) + "[seterator]" + JS  + "[end_block]";//newlines are to put it under the line
+                    var HTML_cond=generate_conditional_start(text_cond,"while loop condition",true);
+                    var JS_while="while("+text_cond+") {\n";
+                    blocks+=HTML_cond + "[seterator]" + JS_while  + "[end_block]"; 
+                    blocks+=statements_statements;
+                    blocks+=end_while() + "[seterator][end_block]";
+                    state="col3_outside_loop";
+                    var text_out = "RETURN";
+                    contitionat_indent=false;
+                    in_function=false;
+                    var text_comment = "Remember this is the block after the last do procedure " + text_proc_name + " card";
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png";
+                    var JS= indentation()+ "}" + "; //[end while] "+text_comment+"\n"; 
+                    JS+= indentation()+ "}" + "; //[end procedure] "+text_comment+"\n"; 
+                    blocks+=html_row(imageURL,text_out,text_comment) + "[seterator]" + JS  + "[end_block]";                   
+                    return blocks;
+                }
+                function generate_conditional_start(text_cond,text_comment,no_JS) {
+                    //conditional
+                    imageURL="https://github.com/amigojapan/m-programmer/raw/master/originals/conditional_branch_card.png";
+                    contitionat_indent=false;
+                    var JS= indentation()+"if(" + text_cond + ") { //"+text_comment+";\n";
+                    contitionat_indent=true;
+                    if(no_JS) {
+                        return  conditional_html_row(imageURL,text_cond,text_comment);    
+                    }
+                    return  conditional_html_row(imageURL,text_cond,text_comment) + "[seterator]" + JS  + "[end_block]";
+                }
+                //end Blocks
+
+                workspaceChanged = function() {
+                    console.log("workspaceChanged");
+                    drawFlowchard();
+                    workspace.traceOn(true);
+                    workspace.highlightBlock(null);
+                }
+                workspace.addChangeListener(workspaceChanged);
+
+
+            }, false)
+            function drawFlowchard(){
+                    state="col3_outside_loop";
+                    var debuggerCode = generateCode(false);
+                    var final_code = debuggerCode.JS.replace(" AND ", " && ");
+                    document.getElementById('txtJS').value = final_code;
+                    document.getElementById('txtHTML').value =  debuggerCode.html;
+                    document.getElementById('flowchart').innerHTML = '<form id="form1">\n';
+                    document.getElementById('flowchart').innerHTML += '    <div class="div-table">\n';
+                    document.getElementById('flowchart').innerHTML += debuggerCode.html;
+                    document.getElementById('flowchart').innerHTML += '    </div>\n';
+                    document.getElementById('flowchart').innerHTML += '</form>\n';
+            }
+           function generateCode(add_highlighting) {
+                instruction_number=0;
+                var str = Blockly.JavaScript.workspaceToCode(workspace);
+                var blocks_array = str.split("[end_block]");
+                var return_obj={};
+
+                var CSS_="";
+
+                CSS_+='<style type="text/css">\n';
+                CSS_+='    .div-table {\n';
+                CSS_+='        display:table;\n';         
+                CSS_+='        width:auto;\n';
+                CSS_+='        background-color:#eee;\n';
+                CSS_+='        border:1px solid  #666666;\n';         
+                CSS_+='        border-spacing:5px;/*cellspacing:poor IE support for  this*/\n';
+                CSS_+='    }\n';
+                CSS_+='    .div-table-row {\n';
+                CSS_+='        display:table-row;\n';
+                CSS_+='        width:auto;\n';
+                CSS_+='        clear:both;\n';
+                CSS_+='    }\n';
+                CSS_+='    .div-table-col {\n';
+                CSS_+='        float:left;/*fix for  buggy browsers*/\n';
+                CSS_+='        display:table-column;\n';
+                CSS_+='        width:100px;\n';
+                CSS_+='        height:100px;\n';
+                CSS_+='        background-color:#ccc;\n';
+                CSS_+='        border: 1px solid black;\n';
+                CSS_+='        text-align: center;\n';
+                CSS_+='        vertical-align: middle;\n';
+                CSS_+='        word-wrap:break-word; /* cause word wramp, what happens if I make a really long comment? blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah*/\n';
+                CSS_+='    }\n';
+                CSS_+='    span.overlay_text {\n';
+                CSS_+='        position: absolute;\n'; 
+                CSS_+='        top: 50px;\n'; 
+                CSS_+='        left: 0;\n'; 
+                CSS_+='        width: 100%;\n'; 
+                CSS_+='    }\n';
+                CSS_+='</style>\n';
+
+
+                return_obj.html = "";
+                return_obj.html += '<html>\n';
+                return_obj.html += '<head><meta charset="UTF-8">'+CSS_+'</head>\n';
+                return_obj.html += '    <body>\n';
+                return_obj.html += '        <form id="form1">\n';
+                return_obj.html += '            <div class="div-table">\n';
+                return_obj.JS = "";
+                for(var one_block in blocks_array) {
+                    //if(instruction_pointer==one_block+1){
+                    //    return_obj.html +="<BR>◯ instriction here<BR>"    
+                    //}
+                    if(one_block<blocks_array.length-1){//adjust for some kind of off by one error?
+                        var res = blocks_array[one_block].split("[seterator]");
+                        if(res[0].includes("highlightBlock")){
+
+                            const regex = /(.*);([\s\S]*)/g;//first get the highlight, then get the html
+                            const str = res[0]
+                            let m;
+                            m = regex.exec(str);
+                            
+                            return_obj.JS += m[1]+"\n";//m[0] is the highlight up to the newline
+                            return_obj.JS += res[1];
+                            return_obj.html += m[2];
+                        } else {
+                            return_obj.html += res[0];
+                            return_obj.JS += res[1];
+                        }
+                    }
+                }
+                return_obj.html += '            </div>\n';
+                return_obj.html += '        </form>\n';
+                return_obj.html += '    </body>\n';
+                return_obj.html += '</html>\n';
+                return return_obj;
+            }
+            function xmlToWS() {	
+                Blockly.mainWorkspace.clear();
+                var xml = Blockly.Xml.textToDom(document.getElementById('txtJS').value);
+                Blockly.Xml.domToWorkspace(workspace, xml);
+            }
+
+            function wsToXML() {	
+                var xml = Blockly.Xml.workspaceToDom(workspace);
+                var xml_text = Blockly.Xml.domToPrettyText(xml);
+                document.getElementById('txtJS').value = xml_text;
+            }
+            turtle0={}
+            var instruction_pointer=0;
+
+            function move_foward() {
+                if(turtle0.facing=="up"){
+                    turtle0.y--;
+                    if(turtle0.y<1) {
+                        throw("turtle went out of board and cannot be seen anymore, fix your program and restart the program");
+                    }
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="left"){
+                    turtle0.x--;
+                    if(turtle0.x<1) {
+                        throw("turtle went out of board and cannot be seen anymore, fix your program and restart the program");
+                    }
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="down"){
+                    turtle0.y++;
+                    if(turtle0.y>10) {
+                        throw("turtle went out of board and cannot be seen anymore, fix your program and restart the program");
+                    }
+                    drawBoard();
+                    return;
+                }
+                if(turtle0.facing=="right"){
+                    turtle0.x++;
+                    if(turtle0.x>10) {
+                        throw("turtle went out of board and cannot be seen anymore, fix your program and restart the program");
+                    }
+                    drawBoard();
+                    return;
+                }
+            }
+            
+            function drawBoard() {
+                //start table
+                var return_obj={}; 
+                return_obj.html = '<form id="form1" style="transform:scale(0.5);">\n';
+                return_obj.html += '    <div class="div-table">\n';
+                var cellImgURL="turtle_game/one_slot.png";
+                var turtrle0ImgURL="turtle_game/turtle_0.png";
+                turtle0.degrees=0;
+                if(turtle0.facing=="up"){
+                    turtle0.degrees=0;
+                }
+                if(turtle0.facing=="left"){
+                    turtle0.degrees=270;
+                }
+                if(turtle0.facing=="down"){
+                    turtle0.degrees=180;
+                }
+                if(turtle0.facing=="right"){
+                    turtle0.degrees=90;
+                }
+                for(var row=1;row<10+1;row++) {                        
+                    return_obj.html += '<div class="div-table-row">\n';
+                    for(var col=1;col<10+1;col++) {
+                        if(row==turtle0.y&&col==turtle0.x) {
+                            overlay='       <img src ="'+turtrle0ImgURL+'" style="transform: rotate('+turtle0.degrees+'deg);">\n'
+                        } else {
+                            overlay="x:" + row + ",y:"+ col;
+                        }
+                        return_obj.html += '    <div class="div-table-col">\n';
+                        return_obj.html += '       <img src="'+cellImgURL+'">\n';//this way of overlaying an image may be buggy on other browsers I guess, but it will do for now...
+                        return_obj.html += '       <span class="overlay_text" style="position: relative; top: -95px; left: 0; width: 100%;" >' + overlay + '</span>\n';
+                        return_obj.html += '    </div>\n';
+                    }
+                    return_obj.html += '</div>\n';                    
+                }
+                //end table
+                return_obj.html += '    </div>\n';
+                return_obj.html += '</form>\n';
+                document.getElementById('board').innerHTML =return_obj.html;
+            }
+
+    var myInterpreter = null;
+
+    var interpreter_global, scope_global;
+    function quick_wrapper(functiona_name,local) {
+        finalCode =  "var wrapper = function(param1,param2,param3,pram4) {\n";
+        finalCode += "  return interpreter_global.createPrimitive("+functiona_name+"(param1,param2,param3,pram4));\n";
+        finalCode += "};\n";
+        finalCode += "interpreter_global.setProperty(scope_global, '"+functiona_name+"',interpreter_global.createNativeFunction(wrapper));\n";
+        eval.call(window,finalCode);
+     }
+    function initApi(interpreter, scope) {
+        interpreter_global=interpreter;
+        scope_global=scope;
+        // Add an API function for the alert() block.
+
+        var param1,param2,param3,pram4;
+        quick_wrapper("alert");
+        quick_wrapper("turn_left");
+        quick_wrapper("highlightBlock");
+        quick_wrapper("move_foward");
+        quick_wrapper("if");
+        
+        /*
+        var wrapper = function(param1,param2,param3,pram4) {
+            return interpreter.createPrimitive(alert(param1,param2,param3,pram4));
+        };
+        interpreter.setProperty(scope, 'alert',interpreter.createNativeFunction(wrapper));
+        */
+        var wrapper = function(param1,param2,param3,pram4) {
+            return interpreter.createPrimitive(turn_left(param1,param2,param3,pram4));
+        };
+        interpreter.setProperty(scope, 'turn_left',interpreter.createNativeFunction(wrapper));
+        var wrapper = function(param1,param2,param3,pram4) {
+            return interpreter.createPrimitive(highlightBlock(param1,param2,param3,pram4));
+        };
+        interpreter.setProperty(scope, 'highlightBlock',interpreter.createNativeFunction(wrapper));
+        var wrapper = function(param1,param2,param3,pram4) {
+            return interpreter.createPrimitive(move_foward(param1,param2,param3,pram4));
+        };
+        interpreter.setProperty(scope, 'move_foward',interpreter.createNativeFunction(wrapper));
+        
+        
+        var wrapper = function() {
+            //text = text ? text.toString() : '';
+            return interpreter.createPrimitive(turn_left());
+        };
+        interpreter.setProperty(scope, 'turn_left',
+        interpreter.createNativeFunction(wrapper));
+
+        var highlightPause = false;
+    }
+
+    function highlightBlock(id) {
+      workspace.highlightBlock(id);
+      highlightPause = true;
+    }
+
+    function parseCode_backup() {
+        init_board0();
+        instruction_pointer=0;
+      // Generate JavaScript code and parse it.
+      
+      Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+      Blockly.JavaScript.addReservedWords('highlightBlock');
+
+      //var code = Blockly.JavaScript.workspaceToCode(workspace);
+      workspaceChanged();
+
+      var final_code = document.getElementById('txtJS').value;
+      myInterpreter = new Interpreter(final_code, initApi);
+      
+      alert('Ready to execute this code:\n\n' + final_code);
+      document.getElementById('stepButton').disabled = '';
+      highlightPause = false;
+      workspace.highlightBlock(null);
+    }
+    var instruction_array=[];
+    function parseCode() {
+        instruction_array=[]
+        init_board0();
+        instruction_pointer=0;
+        actual_instruction_pointer=0;
+        // Generate JavaScript code and parse it.
+
+        Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+        Blockly.JavaScript.addReservedWords('highlightBlock');
+
+        //var code = Blockly.JavaScript.workspaceToCode(workspace);
+        workspaceChanged();
+
+        var final_code = document.getElementById('txtJS').value;
+        // add semicolons to highlightBlocks
+        const regex = /highlightBlock\('.*'\)/g;
+        const str = final_code;
+        let m;
+
+        while ((m = regex.exec(str)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+            
+            // The result can be accessed through the `m`-variable.
+            m.forEach((match, groupIndex) => {
+                console.log(`Found match, group ${groupIndex}: ${match}`);
+                final_code = final_code.replace(match, match+";");
+            });
+        }
+        //add semicolons after comments, this is nessesay cause users wont put semicolons after comments, but if I dont do this the split will not split everything properly
+        
+        const regex2 = /\/\/.*\n/g;
+        const str2 = final_code;
+        let m2;
+
+        while ((m2 = regex2.exec(str2)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m2.index === regex2.lastIndex) {
+                regex2.lastIndex++;
+            }
+            
+            // The result can be accessed through the `m`-variable.
+            m2.forEach((match, groupIndex) => {
+                console.log(`Found match, group ${groupIndex}: ${match}`);
+                final_code = final_code.replace(match, match+";");
+            });
+        }
+        
+
+        var instruction_array_with_comments = final_code.split(";");
+        //remove comments from code
+        instruction_array_with_empty=[];
+        var instruction_number=0;
+        for(;instruction_number<instruction_array_with_comments.length;instruction_number++) {
+            if(!instruction_array_with_comments[instruction_number].includes("//")||instruction_array_with_comments[instruction_number].includes("if(")) {
+                instruction_array_with_empty.push(instruction_array_with_comments[instruction_number]);
+            }
+        }
+
+        //remove whitespace lines, add semicolons for prettyness
+        var instruction_number=0;
+        for(;instruction_number<instruction_array_with_empty.length;instruction_number++) {
+            const regex3 = /[A-Za-z0-9](.*)/g;//starts with alphanumeric
+            const str3 = instruction_array_with_empty[instruction_number];
+            let m3;
+            m3 = regex3.exec(str3)
+            if(
+                (
+                    m3 != null
+                    &&
+                    (typeof instruction_array_with_empty[instruction_number] != 'undefined')
+                )
+                ||
+                instruction_array_with_empty[instruction_number].includes("}")
+            ) {//is not empty or is an } and fudge cause I am too lazy to debug why it has some undefined values
+                instruction_array.push(instruction_array_with_empty[instruction_number]+";");
+            }
+        }
+       
+      
+
+        //eliminate empty lines and white space only lines, just cleanup it should work like this...
+
+        //need to make an array with the instruction pointers of all functions..., also store pointer of return address
+        //change instruction pointer when function call
+
+        document.getElementById('stepButton').disabled = '';
+        highlightPause = false;
+        workspace.highlightBlock(null);
+
+        do_non_user_defined_blocks();
+        drawFlowchard();
+        document.getElementById('IP').innerHTML ="instruction_pointer:"+0;
+        document.getElementById('instruction_number-'+0).innerHTML ="<br><br>"+0+"◯"; 
+        instruction_pointer++;
+
+    }
+    var current_instruction;
+    function do_non_user_defined_blocks() {
+        current_instruction=instruction_array[actual_instruction_pointer];
+        while(current_instruction.includes("highlightBlock")) {//highlightBlocks eval
+            eval.call(window,current_instruction);
+            actual_instruction_pointer++;
+            current_instruction=instruction_array[actual_instruction_pointer];                
+        }
+        if(current_instruction.includes("}")) {//||current_instruction.includes("if(")){//skip if and close blocks
+            actual_instruction_pointer++;
+            current_instruction=instruction_array[actual_instruction_pointer];                
+        }
+        while(current_instruction.includes("highlightBlock")) {//highlightBlocks eval
+            eval.call(window,current_instruction);
+            actual_instruction_pointer++;
+            current_instruction=instruction_array[actual_instruction_pointer];                
+        }            
+    }
+    function do_non_user_defined_blocks_for_conditional() {
+        current_instruction=instruction_array[actual_instruction_pointer];
+        while(current_instruction.includes("highlightBlock")) {//highlightBlocks eval
+            eval.call(window,current_instruction);
+            actual_instruction_pointer++;
+            current_instruction=instruction_array[actual_instruction_pointer];                
+        }
+    }
+    
+    var actual_instruction_pointer;
+    function stepCode() {
+        //if instruction is if, calculate value, if false,
+        // calculate instruction number of after } then just set the instruction pointer properly, dont eval.
+        do_non_user_defined_blocks();
+        current_instruction=instruction_array[actual_instruction_pointer];
+        if(current_instruction=="END_HERE()"){
+            alert("Program ended.");
+            document.getElementById('IP').innerHTML ="instruction_pointer:progam halted";
+            document.getElementById('instruction_number-'+instruction_pointer-1).innerHTML ="<br><br>"+instruction_pointer-1;    
+            parseCode();//start over
+        }
+        var skip_this_eval=false;        
+        const regex = /if\((.*)\) {/g;
+        let m;
+        m = regex.exec(current_instruction);
+        if (m !== null) {
+            condition=m[1];
+            skip_this_eval=true;
+            //actual_instruction_pointer++;//skip the actual is statement(added may 8 2017)
+            if(!eval(condition)){//if the instuction is false jump to after }
+                //calculate end of instruction pointer
+                while(!current_instruction.includes("}")) {
+                    //brake in case of eternal loop
+                    if(instruction_pointer>50000) {
+                        alert("you are probably missing an enf if block");
+                        break;
+                    }
+                    do_non_user_defined_blocks_for_conditional();
+                    actual_instruction_pointer++;
+                    instruction_pointer++;
+                    current_instruction=instruction_array[actual_instruction_pointer];
+                    do_non_user_defined_blocks_for_conditional();
+                }
+                /*
+                //skip the }
+                do_non_user_defined_blocks_for_conditional();
+                actual_instruction_pointer++;
+                instruction_pointer++;
+                do_non_user_defined_blocks_for_conditional();
+                current_instruction=instruction_array[actual_instruction_pointer];
+                //actual_instruction_pointer++;
+                //current_instruction=instruction_array[actual_instruction_pointer];   
+                */
+            } else {//an if statement was reacher, skip it and go into the body
+                    do_non_user_defined_blocks_for_conditional();
+                    actual_instruction_pointer++;
+                    instruction_pointer++;
+                    do_non_user_defined_blocks_for_conditional();
+                    current_instruction=instruction_array[actual_instruction_pointer];
+            }
+            actual_instruction_pointer=actual_instruction_pointer-2;//this will put it on the instruction point after the folloing code runs, cause of the blockhighlight in the middle,kindof hacky
+            instruction_pointer--;//seems I need this to be in the correct index for some reason, try it with more than one instruction in the is
+        }  
+        do_non_user_defined_blocks();
+ 
+        if(skip_this_eval==false) {
+            var ok = eval.call(window,current_instruction);
+        }
+        // A block has been highlighted.  Pause execution here.
+        highlightPause = false;
+        
+        drawFlowchard();
+        document.getElementById('IP').innerHTML ="instruction_pointer:"+instruction_pointer;
+        document.getElementById('instruction_number-'+instruction_pointer).innerHTML ="<br><br>"+instruction_pointer+"◯"; 
+        instruction_pointer++;
+        actual_instruction_pointer++;
+        drawBoard();
+    }
+    function stepCode_backup() {
+      try {
+        
+      } finally {
+        if (!ok) {
+          // Program complete, no more code to execute.
+          document.getElementById('stepButton').disabled = 'disabled';
+          workspace.highlightBlock(null);
+
+          
+          document.getElementById('IP').innerHTML ="program ended";
+          document.getElementById('instruction_number-'+(instruction_pointer-1)).innerHTML ="<br><br>"+(instruction_pointer-1)+""; 
+          
+          return;
+        }
+      }
+      if (highlightPause) {
+        // A block has been highlighted.  Pause execution here.
+        highlightPause = false;
+
+        drawFlowchard();
+        document.getElementById('IP').innerHTML ="instruction_pointer:"+instruction_pointer;
+        document.getElementById('instruction_number-'+instruction_pointer).innerHTML ="<br><br>"+instruction_pointer+"◯"; 
+        instruction_pointer++;
+        drawBoard();
+      } else {
+        // Keep executing until a highlight statement is reached.
+        stepCode();
+      }
+    }
+
+    function init_board0(){
+        turtle0.x=5;
+        turtle0.y=10;
+        turtle0.facing="up";
+    }
+
+            function runJS() {
+                init_board0();
+                drawBoard();
+                workspaceChanged();
+                var final_code = document.getElementById('txtJS').value;
+                try {
+                    eval(final_code);
+                } catch(err) {
+                    if(err=="end"){
+                        return;
+                    } else {
+                        console.log("ERROR in eval:" + err);
+                        debugger;
+                    }
+                }
+            }
+            //in-program functions
+            function swap(indexA,indexB){
+                var tmp = A[indexA];
+                A[indexA] = A[indexB];
+                A[indexB] = tmp;
+            }
+            function RandomRange(min,max) {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+                return Math.round(Math.random() * (max - min) + min);//should be floor
+            }
+
+            var RM = "not set";//random method
+            var R=NaN;
+            function RND() {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+                if(RM=="not set") {
+                    alert("Error, RND called, but Random Method(variable RM) not set");
+                    R=NaN;
+                }
+                //Method_A_: solo elige un número de 0 a 9
+                if(RM=="A") {
+                    R=RandomRange(0,9);
+                }                
+                //Method_B_: solo elige un número de 0 a 127
+                if(RM=="B") {
+                    R=RandomRange(0,127);
+                }
+                //Method_C_: solo elige un número de 0 a 100
+                if(RM=="C") {
+                    R=RandomRange(0,100);
+                }
+                //Method_D_: solo elige un número de 1 a 10
+                if(RM=="D") {
+                    R=RandomRange(1,10);
+                }
+                //Method_E_: solo elige un número de 1 a 100
+                if(RM=="E") {
+                    R=RandomRange(1,100);
+                }
+                //Method_F_: solo elige un número de X a Y(todavia no implementado en forma de algoritmo)
+                if(RM=="F") {
+                    R=RandomRange(X,Y);
+                }                
+            }
+
+            function DiceRoll() {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+                return RandomRange(1,6);//return Math.floor(Math.random() * (6 - 1) + 1);//should be floor
+            }
+            
+            function FlipCoin() {//I tested that it generates 1 to 6 by for(i=0;i<10000;i++)if(getDiceRoll()==1) console.log("has 1");
+                result = RandomRange(0,1);//return Math.floor(Math.random() * (6 - 1) + 1);//should be floor
+                R = (result==1)?"heads":"tails";
+            }
+            
+            function START_HERE() {}//just a dummy so we can have such a label on the program
+            
+            function END_HERE() {
+                throw "end";
+            }
+            //https://jsfiddle.net/wrdhve1a/7/
+            //SlashLife^m: amigojapan: Throw an exception and catch it outside of your call tree?
+            //TODO:I am almost sure the stepper does not support any kind of loops, enable loops
+        </script>
+    </body>
+</html>

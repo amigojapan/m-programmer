@@ -1,0 +1,108 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="process_block" x="242" y="-64">
+    <field name="proc">START_HERE()</field>
+    <field name="comment">insertion sort algorythm</field>
+    <next>
+      <block type="process_block">
+        <field name="proc">A=[5,6,2,3,1,4]</field>
+        <field name="comment">These are the cut up pieces of paper</field>
+        <next>
+          <block type="output_block">
+            <field name="out">"A before sorting:" + A</field>
+            <field name="comment">no comment</field>
+            <next>
+              <block type="process_block">
+                <field name="proc">INITIAL=0</field>
+                <field name="comment">no comment</field>
+                <next>
+                  <block type="process_block">
+                    <field name="proc">END=5</field>
+                    <field name="comment">this is the number of pieces of paper</field>
+                    <next>
+                      <block type="process_block">
+                        <field name="proc">INDEX=INITIAL</field>
+                        <field name="comment">no comment</field>
+                        <next>
+                          <block type="do_process_block">
+                            <field name="proc">for_loop</field>
+                            <field name="comment">no comment</field>
+                            <next>
+                              <block type="output_block">
+                                <field name="out">"A after sorting:" + A</field>
+                                <field name="comment">no comment</field>
+                                <next>
+                                  <block type="process_block">
+                                    <field name="proc">END_HERE()</field>
+                                    <field name="comment">no comment</field>
+                                    <next>
+                                      <block type="while_loop">
+                                        <field name="loop_ID">for_loop</field>
+                                        <field name="cond">INDEX&lt;END</field>
+                                        <statement name="statements">
+                                          <block type="process_block">
+                                            <field name="proc">FIRST=INDEX</field>
+                                            <field name="comment">no comment</field>
+                                            <next>
+                                              <block type="process_block">
+                                                <field name="proc">SECOND=FIRST+1</field>
+                                                <field name="comment">no comment</field>
+                                                <next>
+                                                  <block type="do_process_block">
+                                                    <field name="proc">while_loop</field>
+                                                    <field name="comment">no comment</field>
+                                                    <next>
+                                                      <block type="process_block">
+                                                        <field name="proc">INDEX = INDEX+1</field>
+                                                        <field name="comment">no comment</field>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </statement>
+                                        <next>
+                                          <block type="while_loop">
+                                            <field name="loop_ID">while_loop</field>
+                                            <field name="cond">SECOND &gt; 0 AND A[FIRST] &gt; A[SECOND]</field>
+                                            <statement name="statements">
+                                              <block type="process_block">
+                                                <field name="proc">swap(FIRST, SECOND)</field>
+                                                <field name="comment">no comment</field>
+                                                <next>
+                                                  <block type="process_block">
+                                                    <field name="proc">FIRST=FIRST-1</field>
+                                                    <field name="comment">no comment</field>
+                                                    <next>
+                                                      <block type="process_block">
+                                                        <field name="proc">SECOND=FIRST+1</field>
+                                                        <field name="comment">no comment</field>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </statement>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>

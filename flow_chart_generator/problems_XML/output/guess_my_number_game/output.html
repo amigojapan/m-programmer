@@ -1,0 +1,328 @@
+<html>
+<head><meta charset="UTF-8"><style type="text/css">
+    .div-table {
+        display:table;
+        width:auto;
+        background-color:#eee;
+        border:1px solid  #666666;
+        border-spacing:5px;/*cellspacing:poor IE support for  this*/
+    }
+    .div-table-row {
+        display:table-row;
+        width:auto;
+        clear:both;
+    }
+    .div-table-col {
+        float:left;/*fix for  buggy browsers*/
+        display:table-column;
+        width:100px;
+        height:100px;
+        background-color:#ccc;
+        border: 1px solid black;
+        text-align: center;
+        vertical-align: middle;
+        word-wrap:break-word; /* cause word wramp, what happens if I make a really long comment? blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah*/
+    }
+    span.overlay_text {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+    }
+</style>
+</head>
+    <body>
+        <form id="form1">
+            <div class="div-table">
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-0"><BR><BR>0</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >START_HERE()</span>
+    </div>
+    <div class="div-table-col">guess my number game</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-1"><BR><BR>1</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >X<BR>=<BR>0</span>
+    </div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-2"><BR><BR>2</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >RM<BR>=<BR>"E"</span>
+    </div>
+    <div class="div-table-col">set method to 1 to 100</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-3"><BR><BR>3</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >RND()</span>
+    </div>
+    <div class="div-table-col">set R to random number</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-4"><BR><BR>4</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"number from 1 to 100, you have 7 tries"</span>
+    </div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-5"><BR><BR>5</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/do_procedure_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" ><BR><BR>P</span>
+    </div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-6"><BR><BR>6</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >END_HERE()</span>
+    </div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+<div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-22"><BR><BR>22</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/procedure_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" ><BR><BR>P</span>
+    </div>
+    <div class="div-table-col"><BR><BR>P</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-7"><BR><BR>7</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR>true<BR>←</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/conditional_branch_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >X&#62;6</span>
+      </div>
+      <div class="div-table-col"><BR>false<BR>→</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-8"><BR><BR>8</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"You Lose number was:" + R</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-9"><BR><BR>9</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >END_HERE()</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR><BR>←</div>
+      <div class="div-table-col"><BR><BR>←</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-10"><BR><BR>10</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"what is your guess?:"</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-11"><BR><BR>11</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/input_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" ></span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-12"><BR><BR>12</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR>true<BR>←</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/conditional_branch_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >Y&#60;R</span>
+      </div>
+      <div class="div-table-col"><BR>false<BR>→</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-13"><BR><BR>13</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"Too Low"</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-14"><BR><BR>14</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >X<BR>=<BR>X+1</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-15"><BR><BR>15</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >jump to procedure<BR>P</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR><BR>←</div>
+      <div class="div-table-col"><BR><BR>←</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-16"><BR><BR>16</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR>true<BR>←</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/conditional_branch_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >Y&#62;R</span>
+      </div>
+      <div class="div-table-col"><BR>false<BR>→</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-17"><BR><BR>17</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"Too High"</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-18"><BR><BR>18</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >X<BR>=<BR>X+1</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-19"><BR><BR>19</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >jump to procedure<BR>P</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>&nbsp</div>
+      <div class="div-table-col"><BR><BR>↓</div>
+      <div class="div-table-col"><BR><BR>←</div>
+      <div class="div-table-col"><BR><BR>←</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-20"><BR><BR>20</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/output_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >"You win!"</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+  </div>
+  <div class="div-table-row">
+      <div class="div-table-col" ID="instruction_number-21"><BR><BR>21</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">
+         <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+         <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >END_HERE()</span>
+      </div>
+      <div class="div-table-col">&nbsp</div>
+      <div class="div-table-col">&nbsp</div>
+  </div>
+  <div class="div-table-row">
+    <div class="div-table-col" ID="instruction_number-23"><BR><BR>23</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">&nbsp</div>
+    <div class="div-table-col">
+       <img src="https://github.com/amigojapan/m-programmer/raw/master/originals/blank_card.png">
+       <span class="overlay_text" style="position: relative; top: -60px; left: 0; width: 100%;" >RETURN</span>
+    </div>
+    <div class="div-table-col">Remember this is the block after the last do procedure P card</div>
+    <div class="div-table-col">&nbsp</div>
+</div>
+            </div>
+        </form>
+    </body>
+</html>
