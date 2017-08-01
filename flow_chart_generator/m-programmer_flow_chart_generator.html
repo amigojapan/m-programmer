@@ -110,11 +110,14 @@
 		  </xml>
 	</div>
     <div id="flowchart"></div>
+    <div id="control_pannel" style="position:fixed;top:0;width:100%;">
     <button onclick="runJS()">Run</button>
     <button id='init stepper' onclick="parseCode()">Init stepper</button>
     <button id='stepButton' onclick="stepCode()">Step</button>
     <button onclick='throw("end");'>Stop</button>
     <div id="IP">program not stepping</div>
+    </div>
+    
     <div id="board"></div>
 	</div>
         <BR>Javascript/XML:<BR>
@@ -1113,7 +1116,9 @@
             &&
              !instruction_array_with_comments[instruction_number].includes("endif")
             &&
-             !instruction_array_with_comments[instruction_number].includes("end procedure")             
+             !instruction_array_with_comments[instruction_number].includes("end procedure") 
+            &&
+             !instruction_array_with_comments[instruction_number].includes("[end while]") 
              )
              ||instruction_array_with_comments[instruction_number].includes("if(")) {
                 instruction_array_with_empty.push(instruction_array_with_comments[instruction_number]);
@@ -1313,7 +1318,17 @@
                 parseCode();
                 return;
             }
-            if(procedure_name!="START_HERE") {
+            if(procedure_name == "RND") {
+                RND();
+                /*
+                do_non_user_defined_blocks_for_conditional();
+                actual_instruction_pointer++;
+                instruction_pointer++;
+                current_instruction=instruction_array[actual_instruction_pointer];
+                do_non_user_defined_blocks_for_conditional();
+                */
+            }
+            if(procedure_name!="START_HERE"&&procedure_name!="RND"&&procedure_name!="if") {
                 //returns to after function call thanks to this
                 var obj={}
                 if(procedure_name.includes("while")) {//remember while loop procedured must contain the word while to work properly
@@ -1344,6 +1359,7 @@
                     current_instruction=instruction_array[actual_instruction_pointer];
                     do_non_user_defined_blocks_for_conditional();
                 }
+                //***I think this is only during while loops 
                 actual_instruction_pointer=actual_instruction_pointer-2;//this will put it on the instruction point after the folloing code runs, cause of the blockhighlight in the middle,kindof hacky
                 //instruction_pointer--;//seems I need this to be in the correct index for some reason, try it with more than one instruction in the is
                 //instruction_pointer++;//***TO-DO:fix later:this is a hack to make this program fast, I really would like it to rest in the position of the prodcedure declaration for a bit until the step button is hit, but I want to finsh it quick so I am skipping that and jumping ot the next instruction cause hte behaviour seems to be doing that already
@@ -1362,7 +1378,7 @@
     
 
         //if includes }// end procedure jump back to the last callback from the stack(implement stack)
-        if(current_instruction.includes("}// end procedure;")||current_instruction.includes("} //[end procedure]")) {//why does it not have blocks? strange, must come form another code generator, fix later||current_instruction.includes("} //[end while]")) {
+        if(current_instruction.includes("}// end procedure;")||current_instruction.includes("} //[end procedure]")||current_instruction.includes("} //[end while]")) {//why does it not have blocks? strange, must come form another code generator, fix later||current_instruction.includes("} //[end while]")) {
             if(end_while) {
                 end_while=false;
                 call_stack.pop();//pop off the callback to the while loop if the while loop should end so we can go back to the original function call
@@ -1379,6 +1395,7 @@
             document.getElementById('IP').innerHTML ="instruction_pointer:"+(instruction_pointer-1);
             //the previous one gets erased cause the flowchart is renewed
             document.getElementById('instruction_number-'+(instruction_pointer-1)).innerHTML ="<br><br>"+(instruction_pointer-1)+"◯"; //hack it into showing the previous IP desperate attempt
+            location.hash = 'instruction_number-'+(instruction_pointer-1);
             return;//avoid going thru because it we do it it will incrament and that is not what we want, it may be one instruction short, if she just make -3 into -2 whne I store the previous instruction pointer
             //skip_this_eval=true;
         }
@@ -1396,6 +1413,7 @@
         instruction_pointer++;
         actual_instruction_pointer++;
         drawBoard();
+        
     }
     function stepCode_backup() {
       try {
@@ -1429,6 +1447,8 @@
         document.getElementById('IP').innerHTML ="instruction_pointer:"+instruction_pointer;
         //the previous one gets erased cause the flowchart is renewed
         document.getElementById('instruction_number-'+instruction_pointer).innerHTML ="<br><br>"+instruction_pointer+"◯"; 
+        //this is supposed to scroll to the element id I need location.hash = "elementId"
+        location.hash = 'instruction_number-'+instruction_pointer;
     }
 
     function init_board0(){
