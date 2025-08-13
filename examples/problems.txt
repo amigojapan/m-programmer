@@ -69,9 +69,11 @@ turn left
 do procedure P
 
 procedure P:
-if there is no dot under turtle and turtle is on corner of board {
+if there is a dot under turtle {
+	end
+}
+if turtle is on corner of board {
     turn left
-
 }
 draw dot on board
 foward one slot
